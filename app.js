@@ -11,7 +11,8 @@ app.set('trust proxy', true)
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-let arr = []
+let arr = [];
+let raw = [];
 const server = new SMTPServer({
     name: 'mail.nudegoals.com',
     secure: false,
@@ -44,6 +45,7 @@ const server = new SMTPServer({
           text: parsed.text
         }
         arr.push(newObj)
+        raw.push(parsed)
         stream.on("end", callback)
       })
     // stream.pipe(process.stdout); // print message to console
@@ -62,6 +64,10 @@ app.listen(PORT, function() {
 server.on("error", err => {
     console.log("Error %s", err.message);
   });
+
+  app.get('/raw', cors(), function(req, res) {
+    res.send(raw)
+   })
 
   app.get('/*', cors(), function(req, res) {
    res.send(arr)
