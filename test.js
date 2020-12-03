@@ -6,7 +6,7 @@ var transport = nodemailer.createTransport({
     port: 25,
     auth: { 
       user: "abc",
-      pass: "def"
+      pass: "d"
     },
     debug: true,
     logger: true,
