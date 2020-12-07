@@ -1,27 +1,22 @@
 const nodemailer = require('nodemailer');
-
-var transport = nodemailer.createTransport({
-    host: "mail.nudegoals.com",
-    secure: false,
-    port: 25,
-    auth: { 
-      user: "abc",
-      pass: "d"
-    },
-    debug: true,
-    logger: true,
-    tls: {
-        rejectUnauthorized: false
-      }
-  });
+const option = require('./option.js')
+var transport = nodemailer.createTransport(option);
 
   var mailOptions = {
     from: '"CEO Nude" <CEO@nudegoals.com>',
     to: 'andrewtocchi@gmail.com',
-    subject: 'Nice Nodemailer test',
-    text: 'Hey there, it’s our first message sent with Nodemailer ;) ', 
-    html: '<b>Hey there! </b><br> This is our first message sent with Nodemailer'
+    subject: 'Dumb Test',
+    text: 'Hello, This message is a test ', 
+    html: '<b>Hello,</b><br> This message is a test '
 };
+// transport.verify(function(error, success) {
+//   if (error) {
+//     console.log(error);
+//   } else {
+//     console.log("Server is ready to take our messages");
+//   }
+// });
+
 transport.sendMail(mailOptions, (error, info) => {
     if (error) {
         return console.log(error);

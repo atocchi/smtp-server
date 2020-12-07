@@ -1,9 +1,9 @@
 # smtp-server
 
 # TO DO:
-a - add ORM and needed connections\
-b - remove arrays and instead push to database -maybe mysql\
-c - create ORM queries and new routes for them\
+~~a - add ORM and needed connections~~\
+~~b - remove arrays and instead push to database -maybe mysql~~\
+~~c - create ORM queries and new routes for them~~\
 d - pagination for routes, every 10 / 20\
 e - launch API\
 

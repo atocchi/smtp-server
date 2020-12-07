@@ -1,4 +1,6 @@
 const SMTPServer = require("smtp-server").SMTPServer;
+const nodemailer = require('nodemailer');
+const os = require('os');
 const port = 25;
 const simpleParser = require('mailparser').simpleParser;
 const express = require('express');
@@ -6,6 +8,7 @@ const cors = require ('cors');
 const app = express();
 const PORT = 3030;
 const orm = require('./orm.js');
+const url = require('./url.js');
 
 app.use(cors());
 app.set('trust proxy', true)
@@ -15,11 +18,8 @@ app.use(express.json());
 let arr = [];
 let raw = [];
 
-orm.selectTen(function(data){
-  console.log(data)
-})
 const server = new SMTPServer({
-    name: 'mail.nudegoals.com',
+    name: url,
     secure: false,
     logger: true,
     onMailFrom(address, session, callback) {
@@ -35,13 +35,35 @@ const server = new SMTPServer({
     },
      onData(stream, session, callback) {
       simpleParser(stream, {}, (err, parsed) => {
-        if (err)
+        if (err){
           console.log("Error:" , err)
-        
-        console.log(parsed)
-        console.log(parsed.to.text)
-        console.log(parsed.from.text)
-        console.log(parsed.text)
+        }
+        const toExchange = 'a11-124.smtp-out.amazonses.com';
+        const outMessage = {
+          from: parsed.from.text,
+          to: parsed.to.text,
+          subject: parsed.subject,
+          text: parsed.text,
+          html: parsed.html
+        }
+
+        // const transporter = nodemailer.createTransport({
+        //     port: 25,
+        //     host: toExchange,
+        //     name: os.hostname(),
+        //     secure: false,
+        //     debug: true,
+        //     logger: true,
+        //     tls: {
+        //           rejectUnauthorized: false
+        //           }
+        // });
+
+        // transporter.sendMail(outMessage);
+        // console.log(parsed)
+        // console.log(parsed.to.text)
+        // console.log(parsed.from.text)
+        // console.log(parsed.text)
         let newObj = {
           from: parsed.from.text,
           to: parsed.to.text,
@@ -50,14 +72,22 @@ const server = new SMTPServer({
           text: parsed.text
         }
         orm.insertOne(newObj.from, newObj.to, newObj.subject, newObj.text, newObj.date)
-        arr.unshift(newObj)
-        raw.unshift(parsed)
+        // arr.unshift(newObj)
+        // raw.unshift(parsed)
         stream.on("end", callback)
       })
     // stream.pipe(process.stdout); // print message to console
     // stream.on("end", callback);
     return callback();
   },
+  // onRcptTo(address, session, callback) {
+  //   if (address.address !== "CEO@nudegoals.com") {
+  //     return callback(
+  //       new Error("Only allowed@example.com is allowed to receive mail")
+  //     );
+  //   }
+  //   return callback(); // Accept the address
+  // },
   disabledCommands: ['AUTH']
  });
 console.log
